@@ -1,0 +1,217 @@
+//---------------------------------- первая версия -------------------------------------
+//
+// игрок, управление игроком, отрисовка меню
+//
+// требуют доработки отрисовка меню
+//
+// private world: World
+//   private weapons: Weapon[] = weapons
+//   private inventoryWeapons: Weapon[] = []
+//   private imageWeapons: HTMLImageElement[] = []
+
+// constructor(private UserServise: UserService, private router: Router) {
+//     //this.world = this.UserServise.getActiveWorld()
+//     this.world = {
+//         name: "string",
+//         progress: {
+//             floor: 2,
+//             room: 1,
+//         },
+//         bool: true,
+//         inventory: {
+//             weapons: ['start weapon'],
+//             potions: 0
+//         },
+//         money: 0,
+//         hp: 100,
+//     }
+
+
+//     for (let i = 0; i < this.world.inventory.weapons.length; i++) {
+//         for (let y = 0; y < weapons.length; y++) {
+//             if (this.world.inventory.weapons[i] == weapons[y].name) {
+//                 this.inventoryWeapons[i] = weapons[y]
+//             }
+//         }
+//     }
+
+//     for (let i = 0; i < this.inventoryWeapons.length; i++) {
+//         let imageWeapon = new Image()
+//         imageWeapon.src = this.inventoryWeapons[i].img
+//         imageWeapon.onload = () => { this.imageWeapons.push(imageWeapon) }
+//     }
+// }
+
+// exsite() {
+//     this.router.navigate(["/worlds"])
+// }
+
+// @ViewChild('canvas', { static: true }) canvasRef!: ElementRef
+
+//   //игрок
+//   private player: Rect = {
+//     x: 100,
+//     y: 100,
+//     speed: 10,
+//     side: 20
+// }
+//   //фон
+//   private fon = new Image()
+
+//   // this.fon.src = "../img/web/road.png"
+//   // fon.onload = () => {
+//   //   const pattern = ctx.createPattern(fon, "repeat");
+//   //   ctx.fillStyle = pattern;
+//   //   ctx.fillRect(0, 50, canvas.width, canvas.height);
+//   // }
+
+//   //
+//   private activeWeapon: Weapon = this.inventoryWeapons[0]
+
+
+// ngOnInit(): void {
+//     const canvas: HTMLCanvasElement = this.canvasRef.nativeElement
+//     const ctx = canvas.getContext('2d')
+
+//     canvas.width = window.innerWidth
+//     canvas.height = document.documentElement.clientHeight
+
+
+//     //элемент управления
+//     let pressed: any = {}
+//     document.addEventListener("keydown", function (event) {
+//         pressed[event.code] = true
+//     })
+//     document.addEventListener("keyup", function (event) {
+//         pressed[event.code] = false
+//     })
+
+    
+
+//     setInterval(() => {
+//     if (ctx) {
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//         //управление 
+//         if (pressed["KeyW"] && this.player.y > 55 && pressed["KeyD"] && this.player.x + this.player.side * 1.4 < canvas.width) {
+//             this.player.y -= this.player.speed / 1.414
+//             this.player.x += this.player.speed / 1.414
+//         } else
+//             if (pressed["KeyW"] && this.player.y > 55 && pressed["KeyA"] && this.player.x > 0) {
+//                 this.player.y -= this.player.speed / 1.414
+//                 this.player.x -= this.player.speed / 1.414
+//             } else
+//                 if (pressed["KeyS"] && this.player.y + this.player.side * 1.4 < canvas.height && pressed["KeyD"] && this.player.x + this.player.side * 1.4 < canvas.width) {
+//                     this.player.y += this.player.speed / 1.414
+//                     this.player.x += this.player.speed / 1.414
+//                 } else
+//                     if (pressed["KeyS"] && this.player.y + this.player.side * 1.4 < canvas.height && pressed["KeyA"] && this.player.x > 0) {
+//                         this.player.y += this.player.speed / 1.414
+//                         this.player.x -= this.player.speed / 1.414
+//                     } else
+//                         if (pressed["KeyW"] && this.player.y > 55) {
+//                             this.player.y -= this.player.speed
+//                         } else
+//                             if (pressed["KeyD"] && this.player.x + this.player.side * 1.4 < canvas.width) {
+//                                 this.player.x += this.player.speed
+//                             } else
+//                                 if (pressed["KeyS"] && this.player.y + this.player.side * 1.4 < canvas.height) {
+//                                     this.player.y += this.player.speed
+//                                 } else
+//                                     if (pressed["KeyA"] && this.player.x > 0) {
+//                                         this.player.x -= this.player.speed
+//                                     }
+//         if (pressed["KeyX"]) {
+//             this.exsite()
+//         }
+
+
+//         //
+//         this.drawRectangle(ctx, this.player)
+//         this.drawMenu(ctx, this.world, this.imageWeapons)
+
+//     }
+// }, 25);
+//   }
+
+// //
+// drawRectangle(ctx: CanvasRenderingContext2D, rect: Rect) {
+//     ctx.fillStyle = "Green"
+//     ctx.fillRect(rect.x, rect.y, rect.side, rect.side)
+// }
+
+// drawMenu(ctx: CanvasRenderingContext2D, world: World, imageWeapons: any) { //фон
+//     const color = "black"
+
+//     // const pattern = ctx.createPattern(fon, "repeat");
+//     // ctx.fillStyle = pattern;
+//     // ctx.fillRect(0, 50, canvas.width, canvas.height);
+
+//     ctx.fillStyle = "AliceBlue"
+//     ctx.fillRect(0, 0, window.innerWidth, 50)
+
+//     ctx.beginPath()
+//     ctx.moveTo(0, 50)
+//     ctx.lineTo(window.innerWidth, 50)
+//     ctx.strokeStyle = color
+//     ctx.stroke()
+
+//     ctx.beginPath()
+//     ctx.rect(20, 15, world.hp * 2, 20)
+//     ctx.fillStyle = "red"
+//     ctx.fill()
+//     ctx.closePath()
+
+//     ctx.font = '25px Arial'
+//     ctx.textAlign = 'left'
+//     ctx.textBaseline = 'top'
+//     ctx.fillStyle = color
+//     ctx.fillText(`${world.hp}`, 105, 15)
+
+//     ctx.font = '30px Arial'
+//     ctx.fillText(`money: ${world.money}`, 300, 10)
+
+//     ctx.fillText(`inventory`, 500, 10)
+
+//     for (let i = 0; i < 10; i++) {
+//         let x = 650 + i * 30
+//         ctx.beginPath()
+//         ctx.rect(x, 10, 30, 30)
+//         ctx.strokeStyle = color
+//         ctx.stroke()
+//     }
+
+//     //inventory
+//     let x = 620
+//     // for (let i = 0; i < imageWeapons.length; i++) {
+//     //     x += 30
+//     //     ctx.drawImage(imageWeapons[i], x, 12, 28, 28)
+//     // }
+//     // for (let i = 0; i < world.inventory.potions; i++) {
+//     //     ctx.beginPath()
+//     //     ctx.ellipse(x + 45 + i * 30, 25, 14, 14, 0, 0, 2 * Math.PI)
+//     //     ctx.fillStyle = "red"
+//     //     ctx.fill()
+//     //     ctx.closePath()
+//     // }
+
+// }
+
+// drawLine(ctx: CanvasRenderingContext2D) {
+//     ctx.strokeStyle = 'red'
+
+//     ctx.lineWidth = 10
+//     // ctx.lineCap = 'round'
+//     ctx.setLineDash([4, 4])
+//     ctx.beginPath()
+//     ctx.moveTo(100, 600)
+//     ctx.lineTo(180, 600)
+//     ctx.stroke()
+//     //ctx.fill()
+// }
+
+// drawText(ctx: CanvasRenderingContext2D) {
+//     ctx.fillStyle = 'blue'
+//     ctx.font = '30px Arial'
+//     ctx.fillText('text', 100, 500)
+// }

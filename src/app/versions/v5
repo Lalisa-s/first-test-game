@@ -1,0 +1,495 @@
+//---------------------------------- пятая версия -------------------------------------
+//
+// устраненено (перескакивает с 1-2 на 2-1 пропускает 1-3)
+// добавлено поведение босса
+// (выявлен баг не всегда у портала и игрока происходит коллизия) более замечен не был
+// 
+// проблемы с сохранением
+// обновление управления игроком отложено до версии с анимацией
+// сохранение полученого оружия пока не реализованно
+//
+//
+// import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+// import { UserService } from '../../service/user.service';
+// import { Enemy, Potion, Rect, Weapon, World } from '../../data/interface';
+// import { Router } from '@angular/router';
+// import { weapons } from '../../data/weapons';
+// import { level } from '../../data/lvl';
+// import { potions } from '../../data/potions';
+// import { checkCircleAndRectCollision, checkRectCollision, drawCircle, drawEnemy, drawImg, drawMenu, drawRectangle, checkCirclesCollision, drawBoss, drawCircleImg } from '../../data/draw';
+
+// @Component({
+//   selector: 'app-game-page',
+//   imports: [],
+//   templateUrl: './game-page.component.html',
+//   styleUrl: './game-page.component.css'
+// })
+
+// export class GamePageComponent implements OnInit {
+//   constructor(private UserServise: UserService, private router: Router) {
+//     this.world = this.UserServise.getActiveWorld()
+
+//     for (let i: number = 0; i < this.world.inventory.length; i++) {
+//       for (let y: number = 0; y < this.weapons.length; y++) {
+//         if (this.world.inventory[i] == this.weapons[y].name) {
+//           this.inventory.push(this.weapons[y])
+//         }
+//       }
+
+//       for (let y: number = 0; y < this.potions.length; y++) {
+//         if (this.world.inventory[i] == this.potions[y].name) {
+//           this.inventory.push(this.potions[y])
+//         }
+//       }
+//     }
+
+//     this.activeSlot = this.inventory[this.activeSlotI]
+//     this.lvl = level[this.world.progress.floor - 1][this.world.progress.room - 1]
+//   }
+
+//   exsite() {
+//     this.router.navigate(["/worlds"])
+//   }
+//   getRandom(min: number, max: number) {
+//     return Math.random() * (max - min) + min
+//   }
+//   getDistance(a: any, b: any) {
+//     return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
+//   }
+
+//   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef
+
+//   // мир 
+//   private world: World
+//   private lvl: any
+//   // оружие
+//   private weapons: Weapon[] = weapons
+//   private potions: Potion[] = potions
+//   private inventory: any = []
+//   private inventoryImg: HTMLImageElement[] = []
+//   private activeSlotI: number = 0
+//   //private activeSlot: Weapon | Potion
+//   private activeSlot: any
+//   // изображения: создание
+//   private fon = new Image()
+//   private port = new Image()
+//   private imgPlayer = new Image()
+
+//   // игровые объекты
+//   private player: any = {
+//     x: 100,
+//     y: 100,
+//     speed: 7,
+//     radius: 20
+//   }
+//   private enemies: Enemy[] = []
+
+//   // игровая логика
+//   ngOnInit(): void {
+//     const canvas: HTMLCanvasElement = this.canvasRef.nativeElement
+//     const ctx = canvas.getContext('2d')
+
+//     canvas.width = window.innerWidth
+//     canvas.height = document.documentElement.clientHeight
+
+//     const gameWindow = {
+//       x: 1,
+//       y: 50,
+//       w: canvas.width,
+//       h: canvas.height
+//     }
+
+//     //элемент управления
+//     let pressed: any = {}
+//     document.addEventListener("keydown", function (event) {
+//       pressed[event.code] = true
+//     })
+//     document.addEventListener("keyup", function (event) {
+//       pressed[event.code] = false
+//     })
+
+//     //изображения: инвентарь
+//     for (let i = 0; i < this.inventory.length; i++) {
+//       let image = new Image()
+//       image.src = this.inventory[i].img
+//       image.onload = () => { this.inventoryImg.push(image) }
+//     }
+
+//     // изображения: запуск
+//     this.fon.src = "/gameImg/blueRoad.png"
+//     this.fon.onload = () => { }
+//     this.imgPlayer.src = "/gameImg/playerGoDown1.png"
+//     this.imgPlayer.onload = () => { }
+//     this.port.src = "/gameImg/portal.png"
+//     this.port.onload = () => { }
+
+//     // объявление врагов
+//     for (let i = 0; i < this.world.enemy; i++) {
+//       this.enemies.push({
+//         x: this.getRandom(20, canvas.width - 20),
+//         y: this.getRandom(70, canvas.height - 20),
+//         speed: this.lvl.speed_enemy,
+//         hunting: false,
+//         hp: this.lvl.hp_enemy,
+//         radius: this.lvl.radius_enemy,
+//         color: "Fuchsia",
+//         target: {
+//           x: this.getRandom(20, canvas.width - 20),
+//           y: this.getRandom(70, canvas.height - 20),
+//           radius: 1
+//         }
+//       })
+//     }
+
+//     //  игровые объекты
+//     let portal = {
+//       active: false,
+//       x: gameWindow.w / 2 - 50,
+//       y: gameWindow.h / 2 - 35,
+//       width: 100,
+//       height: 70,
+//       side: 70
+//     }
+
+//     //игровые сущности
+//     let dealer = {
+//       x: 100,
+//       y: 100,
+//       radius: 25,
+//       color: 'fucsia'
+//     }
+
+//     let boss = {
+//       active: this.world.boss,
+//       x: gameWindow.w / 2 - 50,
+//       y: gameWindow.h / 2 - 35,
+//       radius: this.lvl.radius_boss,
+//       speed: this.lvl.speed_boss,
+//       hp: this.lvl.hp_boss,
+//       color: "indigo"
+//     }
+
+//     //время 
+//     var data = new Date();
+//     let last_time_damade_from_enemy = []
+//     for (let i = 0; i < this.enemies.length; i++) {
+//       last_time_damade_from_enemy[i] = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     }
+//     let current_time_damade_from_enemy = []
+//     let last_time_damade_from_player = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_potion_effect = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_dealer = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_inventory = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_damade_from_boss = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_atac_from_boss = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+
+//     setInterval(() => {
+//       if (ctx) {
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//         //управление: игрок
+//         if (pressed["KeyW"] && this.player.y - this.player.radius > gameWindow.y && pressed["KeyD"] && this.player.x + this.player.radius < gameWindow.w) {
+//           this.player.y -= this.player.speed / 1.414
+//           this.player.x += this.player.speed / 1.414
+//         } else if (pressed["KeyW"] && this.player.y - this.player.radius > gameWindow.y && pressed["KeyA"] && this.player.x - this.player.radius > gameWindow.x) {
+//           this.player.y -= this.player.speed / 1.414
+//           this.player.x -= this.player.speed / 1.414
+//         } else if (pressed["KeyS"] && this.player.y + this.player.radius < gameWindow.h && pressed["KeyD"] && this.player.x + this.player.radius < gameWindow.w) {
+//           this.player.y += this.player.speed / 1.414
+//           this.player.x += this.player.speed / 1.414
+//         } else if (pressed["KeyS"] && this.player.y + this.player.radius < gameWindow.h && pressed["KeyA"] && this.player.x - this.player.radius > gameWindow.x) {
+//           this.player.y += this.player.speed / 1.414
+//           this.player.x -= this.player.speed / 1.414
+//         } else if (pressed["KeyW"] && this.player.y - this.player.radius > gameWindow.y) {
+//           this.player.y -= this.player.speed
+//         } else if (pressed["KeyD"] && this.player.x + this.player.radius < gameWindow.w) {
+//           this.player.x += this.player.speed
+//         } else if (pressed["KeyS"] && this.player.y + this.player.radius < gameWindow.h) {
+//           this.player.y += this.player.speed
+//         } else if (pressed["KeyA"] && this.player.x - this.player.radius > gameWindow.x) {
+//           this.player.x -= this.player.speed
+//         } else if (pressed["KeyX"]) {
+//           this.UserServise.saveWorld(this.world)
+//           this.exsite()
+//         }
+
+//         // зона активного оружия игрока 
+//         let player_zone = {
+//           x: this.player.x,
+//           y: this.player.y,
+//           radius: this.player.radius + this.activeSlot.distanсe,
+//           color: "red"
+//         }
+
+//         function isPotion(item: Potion | Weapon): item is Potion {
+//           return 'health' in item
+//         }
+//         function isWeapon(item: Potion | Weapon): item is Weapon {
+//           return 'hit' in item
+//         }
+
+//         // атака игроком
+//         if (pressed["KeyE"]) {
+//           var dete = new Date();
+//           let current_time_damade_from_player = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+//           let current_time_potion_effect = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//           if (isPotion(this.activeSlot)) {
+
+//             if (current_time_potion_effect >= last_time_potion_effect + this.activeSlot.rollback && this.world.hp <= 100 - this.activeSlot.health) {
+//               this.world.hp += this.activeSlot.health
+//               this.player.speed += this.activeSlot.speed
+//               //this..damage += this.activeSlot.damage
+
+//               this.inventory.splice(this.activeSlotI, 1)
+//               this.inventoryImg.splice(this.activeSlotI, 1)
+
+//               last_time_potion_effect = current_time_potion_effect
+//             }
+//           }
+
+//           if (isWeapon(this.activeSlot)) {
+//             for (let i = 0; i < this.enemies.length; i++) {
+//               if (checkCirclesCollision(player_zone, this.enemies[i])) {
+//                 if (current_time_damade_from_player >= last_time_damade_from_player + this.activeSlot.rollback) {
+//                   this.enemies[i].hp -= this.activeSlot.hit
+//                   last_time_damade_from_player = current_time_damade_from_player
+//                 }
+//               }
+//             }
+
+//             if (boss.active && checkCirclesCollision(player_zone, boss) && current_time_damade_from_player >= last_time_damade_from_player + this.activeSlot.rollback) {
+//               boss.hp -= this.activeSlot.hit
+//               last_time_damade_from_player = current_time_damade_from_player
+//             }
+//           }
+//         }
+
+//         if (pressed["KeyQ"]) {
+//           var dete = new Date();
+//           let current_time_dealer = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//           if (checkCirclesCollision(this.player, dealer) && this.lvl.dealer && this.world.money >= this.lvl.prices_dealer &&
+//             this.inventory.length < 10 && current_time_dealer >= last_time_dealer + 500) {
+//             last_time_dealer = current_time_dealer
+//             this.world.money -= this.lvl.prices_dealer
+
+//             for (let i: number = 0; i < this.potions.length; i++) {
+//               if (this.lvl.potion == this.potions[i].name) {
+//                 this.inventory.push(this.potions[i])
+//                 let image = new Image()
+//                 image.src = this.potions[i].img
+//                 image.onload = () => { this.inventoryImg.push(image) }
+//               }
+//             }
+//           }
+//         }
+
+//         // управление: инвентарь
+//         for (let i = 1; i <= 10; i++) {
+//           var dete = new Date();
+//           let current_time_inventory = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//           if (pressed[`Digit${i}`] && current_time_inventory >= last_time_inventory + 150) {
+//             last_time_inventory = current_time_inventory
+
+//             if (this.inventory.length >= i) {
+//               this.activeSlotI = i - 1
+//               this.activeSlot = this.inventory[this.activeSlotI]
+//             }
+
+//           }
+//         }
+
+//         // зона врага
+//         let enemies_zone = []
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           enemies_zone.push({
+//             x: this.enemies[i].x,
+//             y: this.enemies[i].y,
+//             radius: this.lvl.radius_enemy_zone,
+//             color: "red"
+//           })
+//         }
+
+//         //движение врага
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           let distance_enemy = this.getDistance(this.enemies[i], this.enemies[i].target)
+
+//           this.enemies[i].x += (this.enemies[i].target.x - this.enemies[i].x) * this.enemies[i].speed / distance_enemy
+//           this.enemies[i].y += (this.enemies[i].target.y - this.enemies[i].y) * this.enemies[i].speed / distance_enemy
+//         }
+
+//         //движение босса
+//         if (boss.active) {
+//           let distance_boss = this.getDistance(boss, this.player)
+//           var dete = new Date();
+//           let current_time_atac_from_boss = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+  
+//           if (current_time_atac_from_boss < last_time_atac_from_boss + this.lvl.rollback_atac_boss) {
+           
+//             boss.y += (this.player.y - boss.y) * boss.speed / distance_boss
+//             boss.x += (this.player.x - boss.x) * boss.speed / distance_boss
+            
+//           }
+//           if(current_time_atac_from_boss > last_time_atac_from_boss + this.lvl.rollback_atac_boss + 1000) {
+//             last_time_atac_from_boss = current_time_atac_from_boss - 100
+//           }
+
+//         }
+
+//         // портал
+//         if (this.enemies.length <= 0 && !boss.active) {
+//           portal.active = true
+//         }
+
+//         //коллиззии
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           if (checkCirclesCollision(enemies_zone[i], this.player)) {
+//             this.enemies[i].hunting = true
+//             this.enemies[i].target = this.player
+//           } else {
+//             if (this.enemies[i].hunting) {
+//               this.enemies[i].hunting = false
+
+//               this.enemies[i].target = {
+//                 x: this.getRandom(50, 900),
+//                 y: this.getRandom(50, 400),
+//                 radius: 1,
+//               }
+//             }
+//           }
+//         }
+
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           if (checkCirclesCollision(this.enemies[i], this.enemies[i].target)) {
+//             if (this.enemies[i].hunting) {
+//               var dete = new Date();
+//               current_time_damade_from_enemy[i] = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//               if (current_time_damade_from_enemy[i] >= last_time_damade_from_enemy[i] + this.lvl.rollback_enemy) {
+//                 this.world.hp -= this.lvl.damage_from_enemy
+//                 last_time_damade_from_enemy[i] = current_time_damade_from_enemy[i];
+//               }
+//             } else {
+//               this.enemies[i].target = {
+//                 x: this.getRandom(50, 900),
+//                 y: this.getRandom(50, 400),
+//                 radius: 1
+//               }
+//             }
+//           }
+//         }
+
+//         if (portal.active && checkCircleAndRectCollision(this.player, portal)) {
+//           portal.active = false
+
+//           if (this.world.progress.room == 3) {
+//             this.world.progress.floor++
+//             this.world.progress.room = 1
+//           }
+//           else {
+//             this.world.progress.room++
+//           }
+
+//           this.lvl = level[this.world.progress.floor - 1][this.world.progress.room - 1]
+//           this.UserServise.newLevel(this.world.progress.floor, this.world.progress.room)
+
+//           this.world.enemy = this.lvl.number_enemy
+
+//           for (let i = 0; i < this.lvl.number_enemy; i++) {
+//             this.enemies.push({
+//               x: this.getRandom(20, canvas.width - 20),
+//               y: this.getRandom(70, canvas.height - 20),
+//               speed: this.lvl.speed_enemy,
+//               hunting: false,
+//               hp: this.lvl.hp_enemy,
+//               radius: this.lvl.radius_enemy,
+//               color: "Fuchsia",
+//               target: {
+//                 x: this.getRandom(20, canvas.width - 20),
+//                 y: this.getRandom(70, canvas.height - 20),
+//                 radius: 1
+//               }
+//             })
+//           }
+
+//           this.world.boss = this.lvl.boss
+
+//           boss = {
+//             active: this.lvl.boss,
+//             x: 100,
+//             y: 100,
+//             radius: this.lvl.radius_boss,
+//             speed: this.lvl.speed_boss,
+//             hp: this.lvl.hp_boss,
+//             color: "indigo"
+//           }
+//         }
+
+//         if (boss.active && checkCirclesCollision(this.player, boss)) {
+//           var dete = new Date();
+//           let current_time_damade_from_boss = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//           if (current_time_damade_from_boss >= last_time_damade_from_boss + this.lvl.rollback_boss) {
+//             last_time_damade_from_boss = current_time_damade_from_boss
+//             this.world.hp -= this.lvl.damage_from_boss
+//           }
+//         }
+
+//         //убийство врага
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           if (this.enemies[i].hp <= 0) {
+//             this.enemies.splice(i, 1)
+//             this.world.money += this.lvl.revard_for_the_enemy
+//           }
+//           this.world.enemy--
+//         }
+
+//         // убийство босса 
+//         if (boss.active && boss.hp <= 0) {
+//           boss.active = false
+//           this.world.money += this.lvl.revard_for_the_boss
+
+//           this.world.inventory.push(`${this.lvl.weapon_for_the_boss}`)
+
+//           let weap!: Weapon
+//           for (let i = 0; i < weapons.length; i++) {
+//             if (weapons[i].name == this.lvl.weapon_for_the_boss) weap = weapons[i]
+//           }
+//           this.inventory.push(weap)
+
+//           let image = new Image()
+//           image.src = this.inventory[this.inventory.length - 1].img
+//           image.onload = () => { this.inventoryImg.push(image) }
+
+//           this.world.boss = false
+//         }
+
+//         //смерть игрока
+//         if (this.world.hp <= 0) {
+//           this.world.bool = false
+//           this.UserServise.saveWorld(this.world)
+//           this.router.navigate(["/general"])
+//         }
+
+//         // отрисовка
+//         drawMenu(ctx, this.world, this.inventoryImg, this.fon, this.activeSlotI)
+//         if (portal.active) {
+//           drawImg(ctx, this.port, portal)
+//         }
+//         if (this.lvl.dealer) {
+//           drawCircle(ctx, dealer)
+//         }
+//         if (boss.active) {
+//           drawBoss(ctx, boss)
+//         }
+//         drawCircle(ctx, player_zone)
+//         //drawCircle(ctx, this.player)
+//         drawEnemy(ctx, this.enemies, enemies_zone)
+//         drawCircleImg(ctx, this.imgPlayer, this.player)
+
+//       }
+//     }, 25);
+//   }
+// }

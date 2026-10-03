@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="wrap-list">
+        <h1 *ngIf='worlds.length == 0' class="">нет миров:(</h1>
+        <ul *ngFor="let world of worlds">
+            <li *ngIf='world.bool' class="wrap"> 
+                <button (click)="game(world.name)"><img src="/web/play.png" alt=""></button>
+                <h2>{{world.name}}</h2>
+                <button (click)="deleteWorld(world.name)"><img src="/web/bin_delete_file.png" alt=""></button>
+            </li>
+        </ul>
+        <div class="wrap">
+            <button (click)="changeVew()"><img src="/web/plus.png" alt="" /></button>
+            <app-general-button-page></app-general-button-page>
+        </div>
+    </div>
+
+    <div *ngIf="vew" class="create_game_page">
+        <div class="create_game">
+            <div class="name_game">
+                <p>назовите мир:</p>
+                <input [(ngModel)]="worldName" type="text" />
+            </div>
+            <div class="create_game_buttons">
+                <button (click)="createNewGame()">создать</button>
+                <button (click)="changeVew()">отмена</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

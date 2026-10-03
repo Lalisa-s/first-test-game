@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="weapon-wrap">
+            <div class="wrap-button">
+                <button [ngClass]="{ 'not-active-button' : !visibility}" (click)='switching()'>
+                    все
+                </button>
+                <button [ngClass]="{ 'not-active-button' : visibility}" (click)="switching()">
+                    мои оружия
+                </button>
+            </div>
+            <div class="ul-wrap">
+
+                <div *ngFor="let weapon of allWeapons">
+                    <div *ngIf="visibility" class="li-weapon">
+                        <img [src]=weapon.img alt="">
+                        <p *ngIf="weapon.bool">{{weapon.name}}</p>
+                        <p *ngIf="!weapon.bool">босс не пройден</p>
+                    </div>
+
+                    <div *ngIf="!visibility && weapon.bool" class="li-weapon">
+                        <img [src]=weapon.img alt="">
+                        <p>{{weapon.name}}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <app-general-button-page class="gen-but"></app-general-button-page>
+
+    </div>
+</body>
+
+</html>

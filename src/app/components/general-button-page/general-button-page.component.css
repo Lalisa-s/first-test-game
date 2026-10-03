@@ -1,0 +1,13 @@
+:host {
+    display: flex;
+    width: 100px;
+    height: 40px;
+}
+
+button {
+    width: 100px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    background: url('/web/butGenP.png');
+}

@@ -1,0 +1,383 @@
+//---------------------------------- третья версия -------------------------------------
+//
+// добавлены враги, их прорисовка и здоросье, зона видимости врага, зона дальности оружия персонажа, враги могут двигаться
+//
+// придумала как можно избавиться от бага с прошлой персии, как улучшить инвентарь
+// 
+// constructor(private UserServise: UserService, private router: Router) {
+//     //this.world = this.UserServise.getActiveWorld()
+//     this.world = {
+//       name: "string",
+//       progress: {
+//         floor: 2,
+//         room: 1,
+//       },
+//       bool: true,
+//       inventory: {
+//         weapons: ['start weapon', 'knife'],
+//         potions: 0
+//       },
+//       money: 0,
+//       hp: 100,
+//     }
+
+//     this.lvl = level[this.world.progress.floor - 1][this.world.progress.room - 1]
+
+
+//     for (let i = 0; i < this.world.inventory.weapons.length; i++) {
+//       for (let y = 0; y < this.weapons.length; y++) {
+//         if (this.world.inventory.weapons[i] == this.weapons[y].name) {
+//           this.inventoryWeapons[i] = this.weapons[y]
+//         }
+//       }
+//     }
+
+//     for (let i = 0; i < this.inventoryWeapons.length; i++) {
+//       let imageWeapon = new Image()
+//       imageWeapon.src = this.inventoryWeapons[i].img
+//       imageWeapon.onload = () => { this.imageWeapons.push(imageWeapon) }
+//     }
+
+//     this.activeWeapon = this.inventoryWeapons[0]
+//   }
+
+//   exsite() {
+//     this.router.navigate(["/worlds"])
+//   }
+//   getRandom(min: number, max: number) {
+//     return Math.random() * (max - min) + min
+//   }
+//   getDistance(a: any, b: any) {
+//     return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
+//   }
+
+//   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef
+
+//   // мир 
+//   private world: World
+//   private lvl: any
+//   // оружие
+//   private weapons: Weapon[] = weapons
+//   private inventoryWeapons: Weapon[] = []
+//   private imageWeapons: HTMLImageElement[] = []
+//   private activeWeapon: Weapon
+//   // изображения: создание
+//   private fon = new Image()
+
+
+//   // игровые объекты
+//   private player: Rect = {
+//     x: 100,
+//     y: 100,
+//     speed: 10,
+//     side: 20
+//   }
+
+//   private enemies: Enemy[] = []
+
+
+//   ngOnInit(): void {
+//     const canvas: HTMLCanvasElement = this.canvasRef.nativeElement
+//     const ctx = canvas.getContext('2d')
+
+//     canvas.width = window.innerWidth
+//     canvas.height = document.documentElement.clientHeight
+
+//     const gameWindow = {
+//       x: 0,
+//       y: 50,
+//       w: canvas.width,
+//       h: canvas.height
+//     }
+
+//     //элемент управления
+//     let pressed: any = {}
+//     document.addEventListener("keydown", function (event) {
+//       pressed[event.code] = true
+//     })
+//     document.addEventListener("keyup", function (event) {
+//       pressed[event.code] = false
+//     })
+
+//     //время 
+//     var data = new Date();
+//     let last_time_damade_from_enemy = []
+//     for (let i = 0; i < this.enemies.length; i++) {
+//       last_time_damade_from_enemy[i] = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     }
+//     let current_time_damade_from_enemy = []
+//     let last_time_damade_from_player = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_dealer = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_inventory = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_damade_from_boss = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+
+//     // объявление врагов
+//     for (let i = 0; i < this.lvl.number_enemy; i++) {
+//       this.enemies.push({
+//         x: this.getRandom(20, canvas.width - 20),
+//         y: this.getRandom(70, canvas.height - 20),
+//         speed: this.lvl.speed_enemy,
+//         hunting: false,
+//         hp: this.lvl.hp_enemy,
+//         side: this.lvl.radius_enemy,
+//         color: "Fuchsia",
+//         target: {
+//           x: this.getRandom(20, canvas.width - 20),
+//           y: this.getRandom(70, canvas.height - 20),
+//           side: 2
+//         }
+//       })
+//     }
+
+
+//     setInterval(() => {
+//       if (ctx) {
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//         //управление: игрок
+//         if (pressed["KeyW"] && this.player.y > gameWindow.y && pressed["KeyD"] && this.player.x + this.player.side < gameWindow.w) {
+//           this.player.y -= this.player.speed / 1.414
+//           this.player.x += this.player.speed / 1.414
+//         } else
+//           if (pressed["KeyW"] && this.player.y > gameWindow.y && pressed["KeyA"] && this.player.x > gameWindow.x) {
+//             this.player.y -= this.player.speed / 1.414
+//             this.player.x -= this.player.speed / 1.414
+//           } else
+//             if (pressed["KeyS"] && this.player.y + this.player.side < gameWindow.h && pressed["KeyD"] && this.player.x + this.player.side < gameWindow.w) {
+//               this.player.y += this.player.speed / 1.414
+//               this.player.x += this.player.speed / 1.414
+//             } else
+//               if (pressed["KeyS"] && this.player.y + this.player.side < gameWindow.h && pressed["KeyA"] && this.player.x > gameWindow.x) {
+//                 this.player.y += this.player.speed / 1.414
+//                 this.player.x -= this.player.speed / 1.414
+//               } else
+//                 if (pressed["KeyW"] && this.player.y > gameWindow.y) {
+//                   this.player.y -= this.player.speed
+//                 } else
+//                   if (pressed["KeyD"] && this.player.x + this.player.side < gameWindow.w) {
+//                     this.player.x += this.player.speed
+//                   } else
+//                     if (pressed["KeyS"] && this.player.y + this.player.side < gameWindow.h) {
+//                       this.player.y += this.player.speed
+//                     } else
+//                       if (pressed["KeyA"] && this.player.x > gameWindow.x) {
+//                         this.player.x -= this.player.speed
+//                       }
+//         if (pressed["KeyX"]) {
+//           this.exsite()
+//         }
+
+//         // управление: инвентарь
+//         let last_iteracia = false
+//         let activeInventory: { num: number, bool: boolean } = {
+//           num: 0,
+//           bool: false
+//         }
+//         for (let i = 0; i < 10; i++) {
+//           var dete = new Date();
+//           let current_time_inventory = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//           if (i == 9) {
+//             i = -1
+//             last_iteracia = true
+//           }
+//           if (pressed[`Digit${i + 1}`] && current_time_inventory >= last_time_inventory + 150) {
+//             if (last_iteracia) {
+//               i = 9
+//             }
+
+//             activeInventory.num = i
+//             activeInventory.bool = true
+
+//             last_time_inventory = current_time_inventory
+//             for (let x = 0; x < this.inventoryWeapons.length; x++) {
+//               if (i == x) {
+//                 this.activeWeapon = this.inventoryWeapons[i]
+//               }
+//             }
+//             for (let x = this.inventoryWeapons.length; x < this.world.inventory.weapons.length + this.world.inventory.potions; x++) {
+//               if (i == x && this.world.hp <= 100 - this.lvl.potion_hp) {
+//                 this.world.inventory.potions--
+//                 this.world.hp += this.lvl.potion_hp
+//               }
+//             }
+//           }
+//           if (last_iteracia) {
+//             i = 9
+//           }
+//         }
+
+
+//         // зона активного оружия игрока 
+//         let player_zone = {
+//           x: this.player.x + this.player.side / 2,
+//           y: this.player.y + this.player.side / 2,
+//           radius: this.player.side + this.activeWeapon.distanсe,
+//           color: "red"
+//         }
+
+//         // зона врага
+//         let enemies_zone = []
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           enemies_zone.push({
+//             x: this.enemies[i].x + this.enemies[i].side / 2,
+//             y: this.enemies[i].y + this.enemies[i].side / 2,
+//             radius: this.lvl.radius_enemy_zone,
+//             color: "red"
+//           })
+//         }
+
+
+
+//         //движение врага
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           let distance_enemy = this.getDistance(this.enemies[i], this.enemies[i].target)
+
+//           this.enemies[i].x += (this.enemies[i].target.x - this.enemies[i].x) * this.enemies[i].speed / distance_enemy
+//           this.enemies[i].y += (this.enemies[i].target.y - this.enemies[i].y) * this.enemies[i].speed / distance_enemy
+//         }
+
+//         //коллиззии
+//         for (let i = 0; i < this.enemies.length; i++) {
+//           if (this.checkRectCollision(this.enemies[i], this.enemies[i].target)) {
+//             // if (this.enemies[i].hunting) {
+//             //   var dete = new Date();
+//             //   current_time_damade_from_enemy[i] = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//             //   if (current_time_damade_from_enemy[i] >= last_time_damade_from_enemy[i] + this.lvl.rollback_enemy) {
+//             //     this.world.hp -= this.lvl.damage_from_enemy
+//             //     last_time_damade_from_enemy[i] = current_time_damade_from_enemy[i];
+//             //   }
+//             //} else {
+//             this.enemies[i].target = {
+//               x: this.getRandom(50, 900),
+//               y: this.getRandom(50, 400),
+//               side: 2
+//             }
+//             //}
+//           }
+//         }
+
+//         // изображения: запуск
+//         this.fon.src = "/gameImg/road.png"
+//         this.fon.onload = () => { }
+
+//         // отрисовка
+//         this.drawMenu(ctx, this.world, this.imageWeapons, this.fon, activeInventory)
+//         this.drawCircle(ctx, player_zone)
+//         this.drawRectangle(ctx, this.player)
+//         this.drawEnemy(ctx, this.enemies, enemies_zone)
+
+
+//         // for (let i = 0; i < this.enemies.length; i++) {
+//         //   this.drawRectangle(ctx, this.enemies[i])
+//         //   //this.drawCircle(ctx, this.enemies_zone[i])
+//         //   //this.drawRectEnemyHp(ctx, this.enemies[i])
+
+
+
+//       }
+//     }, 25);
+//   }
+
+//   // используемые функции отрисовки
+//   drawRectangle(ctx: CanvasRenderingContext2D, rect: Rect) {
+//     ctx.fillStyle = "Green"
+//     ctx.fillRect(rect.x, rect.y, rect.side, rect.side)
+//   }
+
+//   drawMenu(ctx: CanvasRenderingContext2D, world: World, imageWeapons: any, fon: HTMLImageElement, activeInventory: { num: number, bool: boolean }) { //фон
+//     const color = "black"
+
+//     ctx.fillStyle = ctx.createPattern(fon, "repeat") as CanvasPattern
+//     ctx.fillRect(0, 50, window.innerWidth, window.innerHeight);
+
+//     ctx.fillStyle = "AliceBlue"
+//     ctx.fillRect(0, 0, window.innerWidth, 50)
+
+//     ctx.beginPath()
+//     ctx.moveTo(0, 50)
+//     ctx.lineTo(window.innerWidth, 50)
+//     ctx.strokeStyle = color
+//     ctx.stroke()
+//     ctx.closePath()
+
+//     ctx.beginPath()
+//     ctx.rect(20, 15, world.hp * 2, 20)
+//     ctx.fillStyle = "red"
+//     ctx.fill()
+//     ctx.closePath()
+
+//     ctx.font = '25px Arial'
+//     ctx.textAlign = 'left'
+//     ctx.textBaseline = 'top'
+//     ctx.fillStyle = color
+//     ctx.fillText(`${world.hp}`, 105, 15)
+
+//     ctx.font = '30px Arial'
+//     ctx.fillText(`money: ${world.money}`, 300, 10)
+
+//     ctx.fillText(`inventory`, 500, 10)
+
+//     for (let i = 0; i < 10; i++) {
+//       let x = 650 + i * 30
+//       ctx.beginPath()
+//       ctx.rect(x, 10, 30, 30)
+//       ctx.strokeStyle = color
+//       ctx.stroke()
+//     }
+
+//     //inventory
+//     let x = 620
+//     for (let i = 0; i < imageWeapons.length; i++) {
+//       x += 30
+//       ctx.drawImage(imageWeapons[i], x, 12, 28, 28)
+//     }
+
+//     for (let i = 0; i < world.inventory.potions; i++) {
+//       ctx.beginPath()
+//       ctx.ellipse(x + 45 + i * 30, 25, 14, 14, 0, 0, 2 * Math.PI)
+//       ctx.fillStyle = "red"
+//       ctx.fill()
+//       ctx.closePath()
+//     }
+
+//     if (activeInventory.bool) {
+//       ctx.strokeStyle = "red"
+//       ctx.strokeRect(650 + activeInventory.num * 30, 11, 29, 29)
+//     }
+//   }
+
+//   drawEnemy(ctx: CanvasRenderingContext2D, enemies: Enemy[], enemies_zone: any[]) {
+//     for (let i = 0; i < enemies.length; i++) {
+//       ctx.fillStyle = enemies[i].color
+//       ctx.fillRect(enemies[i].x, enemies[i].y, enemies[i].side, enemies[i].side)
+//       this.drawCircle(ctx, enemies_zone[i])
+//     }
+//   }
+
+//   drawRectEnemyHp(ctx: CanvasRenderingContext2D, rect: Enemy) {
+//     ctx.beginPath()
+//     ctx.rect(rect.x + rect.side / 2 - rect.hp / 2, rect.y - (rect.side + 10), rect.hp, 5)
+//     ctx.fillStyle = "red"
+//     ctx.fill()
+//   }
+
+//   checkRectCollision(first: any, second: any) {
+//     if (first.x <= second.x && first.x + first.side >= second.x && first.y <= second.y && first.y + first.side >= second.y ||
+//       first.x <= second.x + second.side && first.x + first.side >= second.x + second.side && first.y <= second.y && first.y + first.side >= second.y ||
+//       first.x <= second.x && first.x + first.side >= second.x && first.y <= second.y + second.side && first.y + first.side >= second.y + second.side ||
+//       first.x <= second.x + second.side && first.x + first.side >= second.x + second.side && first.y <= second.y + second.side && first.y + first.side >= second.y + second.side
+//     ) {
+//       return true
+//     }
+//     return false
+//   }
+
+//   drawCircle(ctx: CanvasRenderingContext2D, circle: any) {
+//     ctx.beginPath()
+//     ctx.ellipse(circle.x, circle.y, circle.radius, circle.radius, 0, 0, 2 * Math.PI)
+//     ctx.strokeStyle = circle.color
+//     ctx.stroke()
+//     ctx.closePath()
+//   }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="">
+
+        <div class="chat">
+            <img *ngIf="smss.length == 0" class="nullSms" src="/web/Kitty.png" alt="">
+
+            <div *ngFor="let sms of smss">
+                <img *ngIf="sms.author === 'cat'" src="/web/sayKitty.png" alt="">
+                <p *ngIf="sms.author === 'cat' || sms.author === 'cats'" class="cat">{{sms.mess}}</p>
+                <p *ngIf="sms.author === 'user'" class="user" align="right">{{sms.mess}}</p>
+            </div>
+        </div>
+
+        <div class="sms">
+            <div class="">
+                <input type="text" placeholder="ask le chat" class="imp">
+                <button (click)=newMes() class="say">^</button>
+            </div>
+
+            <div class="">
+                <button (click)=gameRool() >как играть</button>
+                <button (click)=pr()>обратная связь</button>
+                <button><a routerLink="/login">выход из аккаунта</a></button>
+            </div>
+        </div>
+
+        <div class="div-gen"><app-general-button-page></app-general-button-page></div>
+    </div>
+</body>
+
+</html>

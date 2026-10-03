@@ -1,0 +1,87 @@
+body {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('/page/worldPage.png');
+  background-size: 100% 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrap-list {
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(44, 59, 57, 0.6);
+}
+
+.wrap {
+  padding: 0px 15 0 15;
+  margin: 10px;
+  width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+li {
+  border: 3px, solid, #ffffff;
+}
+
+button {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+ul {
+  padding: 0;
+}
+
+h1 {
+  display: flex;
+  justify-content: center;
+}
+
+
+.create_game_page {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(100, 96, 92, 0.664);
+  align-items: center;
+  justify-content: center;
+}
+
+.create_game {
+  width: 500px;
+  background-color: rgba(44, 59, 57, 0.7);
+}
+
+.name_game {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.name_game p {
+  color: black;
+}
+
+.create_game_buttons {
+  padding: 10px 25px 10px 25px;
+  display: flex;
+  width: 450px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create_game_buttons button {
+  padding: 10px;
+  border: 3px solid rgba(44, 59, 57, 0.9);
+  border-radius: 5px;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="stat-wrap">
+      <div class="wrap-button">
+        <button [ngClass]="{ 'not-active-button' : !visibility}" (click)='switching()'>
+          топ лучших игроков
+        </button>
+        <button [ngClass]="{ 'not-active-button' : visibility}" (click)='switching()'>
+          мои игры
+        </button>
+      </div>
+      <div class="ul-wrap">
+
+        <div [ngClass]="{ 'not-active-ul' : !visibility}">
+          <div *ngFor="let stat of allStat">
+            <div class="li-stat">
+              <p>имя : {{stat.name}}</p>
+              <p>этаж {{stat.progress.floor}} : комната {{stat.progress.room}}</p>
+            </div>
+          </div>
+        </div>
+
+
+        <div [ngClass]="{ 'not-active-ul' : visibility}">
+          <div *ngIf="myStat.worlds.length == 0" class="">
+            <div class="li-stat">
+              <p>нет игр</p>
+            </div>
+          </div>
+
+          <div *ngIf="myStat.worlds.length != 0" class="">
+            <div *ngFor="let stat of myStat.worlds">
+              <div class="li-stat">
+                <p>мир : {{stat.name}}</p>
+                <p>этаж {{stat.progress.floor}} : комната {{stat.progress.room}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <app-general-button-page class="gen-but"></app-general-button-page>
+
+  </div>
+</body>
+
+</html>

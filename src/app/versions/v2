@@ -1,0 +1,256 @@
+//---------------------------------- вторая версия -------------------------------------
+// 
+// фон, инвентарь, работа с ним, активное поле инвенторя
+//
+// требует доработки активное поле инвенторя, нет возможности использовать зелья
+//
+// выявлен баг: игрок может заходить за край поля
+//
+// private world: World
+//   private weapons: Weapon[] = weapons
+//   private inventoryWeapons: Weapon[] = []
+//   private imageWeapons: HTMLImageElement[] = []
+//   private lvl: any = level
+//   //фон
+//   private fon = new Image()
+
+//   constructor(private UserServise: UserService, private router: Router) {
+//     //this.world = this.UserServise.getActiveWorld()
+//     this.world = {
+//       name: "string",
+//       progress: {
+//         floor: 2,
+//         room: 1,
+//       },
+//       bool: true,
+//       inventory: {
+//         weapons: ['start weapon'],
+//         potions: 0
+//       },
+//       money: 0,
+//       hp: 100,
+//     }
+
+
+//     for (let i = 0; i < this.world.inventory.weapons.length; i++) {
+//       for (let y = 0; y < this.weapons.length; y++) {
+//         if (this.world.inventory.weapons[i] == this.weapons[y].name) {
+//           this.inventoryWeapons[i] = this.weapons[y]
+//         }
+//       }
+//     }
+
+//     for (let i = 0; i < this.inventoryWeapons.length; i++) {
+//       let imageWeapon = new Image()
+//       imageWeapon.src = this.inventoryWeapons[i].img
+//       imageWeapon.onload = () => { this.imageWeapons.push(imageWeapon) }
+//     }
+//   }
+
+//   exsite() {
+//     this.router.navigate(["/worlds"])
+//   }
+
+//   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef
+
+//   //игрок
+//   private player: Rect = {
+//     x: 100,
+//     y: 100,
+//     speed: 10,
+//     side: 20
+//   }
+
+
+
+//   //
+//   private activeWeapon: Weapon = this.inventoryWeapons[0]
+
+
+
+
+//   ngOnInit(): void {
+//     const canvas: HTMLCanvasElement = this.canvasRef.nativeElement
+//     const ctx = canvas.getContext('2d')
+
+//     canvas.width = window.innerWidth
+//     canvas.height = document.documentElement.clientHeight
+
+
+//     //элемент управления
+//     let pressed: any = {}
+//     document.addEventListener("keydown", function (event) {
+//       pressed[event.code] = true
+//     })
+//     document.addEventListener("keyup", function (event) {
+//       pressed[event.code] = false
+//     })
+
+//     //время 
+//     var data = new Date();
+//     let last_time_damade_from_enemy = []
+//     // for (let i = 0; i < enemies.length; i++) {
+//     //   last_time_damade_from_enemy[i] = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     // }
+//     // let current_time_damade_from_enemy = []
+//     let last_time_damade_from_player = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_dealer = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_inventory = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+//     let last_time_damade_from_boss = data.getHours() * 60 * 60 * 1000 + data.getMinutes() * 60 * 1000 + data.getSeconds() * 1000 + data.getMilliseconds()
+
+
+
+//     setInterval(() => {
+//       if (ctx) {
+//         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//         //управление 
+//         if (pressed["KeyW"] && this.player.y > 55 && pressed["KeyD"] && this.player.x + this.player.side * 1.4 < canvas.width) {
+//           this.player.y -= this.player.speed / 1.414
+//           this.player.x += this.player.speed / 1.414
+//         } else
+//           if (pressed["KeyW"] && this.player.y > 55 && pressed["KeyA"] && this.player.x > 0) {
+//             this.player.y -= this.player.speed / 1.414
+//             this.player.x -= this.player.speed / 1.414
+//           } else
+//             if (pressed["KeyS"] && this.player.y + this.player.side * 1.4 < canvas.height && pressed["KeyD"] && this.player.x + this.player.side * 1.4 < canvas.width) {
+//               this.player.y += this.player.speed / 1.414
+//               this.player.x += this.player.speed / 1.414
+//             } else
+//               if (pressed["KeyS"] && this.player.y + this.player.side * 1.4 < canvas.height && pressed["KeyA"] && this.player.x > 0) {
+//                 this.player.y += this.player.speed / 1.414
+//                 this.player.x -= this.player.speed / 1.414
+//               } else
+//                 if (pressed["KeyW"] && this.player.y > 55) {
+//                   this.player.y -= this.player.speed
+//                 } else
+//                   if (pressed["KeyD"] && this.player.x + this.player.side * 1.4 < canvas.width) {
+//                     this.player.x += this.player.speed
+//                   } else
+//                     if (pressed["KeyS"] && this.player.y + this.player.side * 1.4 < canvas.height) {
+//                       this.player.y += this.player.speed
+//                     } else
+//                       if (pressed["KeyA"] && this.player.x > 0) {
+//                         this.player.x -= this.player.speed
+//                       }
+//         if (pressed["KeyX"]) {
+//           this.exsite()
+//         }
+
+//         let last_iteracia = false
+//         let activeInventory: { num: number, bool: boolean } = {
+//           num: 0,
+//           bool: false
+//         }
+//         for (let i = 0; i < 10; i++) {
+//           var dete = new Date();
+//           let current_time_inventory = dete.getHours() * 60 * 60 * 1000 + dete.getMinutes() * 60 * 1000 + dete.getSeconds() * 1000 + dete.getMilliseconds()
+
+//           if (i == 9) {
+//             i = -1
+//             last_iteracia = true
+//           }
+//           if (pressed[`Digit${i + 1}`] && current_time_inventory >= last_time_inventory + 150) {
+//             if (last_iteracia) {
+//               i = 9
+//             }
+
+//             activeInventory.num = i
+//             activeInventory.bool = true
+
+//             last_time_inventory = current_time_inventory
+//             for (let x = 0; x < this.inventoryWeapons.length; x++) {
+//               if (i == x) {
+//                 this.activeWeapon = this.inventoryWeapons[i]
+//               }
+//             }
+//             for (let x = this.inventoryWeapons.length; x < this.world.inventory.weapons.length + this.world.inventory.potions; x++) {
+//               if (i == x && this.world.hp <= 100 - this.lvl.potion_hp) {
+//                 this.world.inventory.potions--
+//                 this.world.hp += this.lvl.potion_hp
+//               }
+//             }
+//           }
+//           if (last_iteracia) {
+//             i = 9
+//           }
+//         }
+
+//         // изображения
+//         this.fon.src = "/gameImg/road.png"
+//         this.fon.onload = () => { }
+
+//         //
+//         this.drawMenu(ctx, this.world, this.imageWeapons, this.fon, activeInventory)
+//         this.drawRectangle(ctx, this.player)
+
+//       }
+//     }, 25);
+//   }
+
+//   //
+//   drawRectangle(ctx: CanvasRenderingContext2D, rect: Rect) {
+//     ctx.fillStyle = "Green"
+//     ctx.fillRect(rect.x, rect.y, rect.side, rect.side)
+//   }
+
+//   drawMenu(ctx: CanvasRenderingContext2D, world: World, imageWeapons: any, fon: HTMLImageElement, activeInventory: { num: number, bool: boolean }) { //фон
+//     const color = "black"
+
+//     ctx.fillStyle = ctx.createPattern(fon, "repeat") as CanvasPattern
+//     ctx.fillRect(0, 50, window.innerWidth, window.innerHeight);
+
+//     ctx.fillStyle = "AliceBlue"
+//     ctx.fillRect(0, 0, window.innerWidth, 50)
+
+//     ctx.beginPath()
+//     ctx.moveTo(0, 50)
+//     ctx.lineTo(window.innerWidth, 50)
+//     ctx.strokeStyle = color
+//     ctx.stroke()
+//     ctx.closePath()
+
+//     ctx.beginPath()
+//     ctx.rect(20, 15, world.hp * 2, 20)
+//     ctx.fillStyle = "red"
+//     ctx.fill()
+//     ctx.closePath()
+
+//     ctx.font = '25px Arial'
+//     ctx.textAlign = 'left'
+//     ctx.textBaseline = 'top'
+//     ctx.fillStyle = color
+//     ctx.fillText(`${world.hp}`, 105, 15)
+
+//     ctx.font = '30px Arial'
+//     ctx.fillText(`money: ${world.money}`, 300, 10)
+
+//     ctx.fillText(`inventory`, 500, 10)
+
+//     for (let i = 0; i < 10; i++) {
+//       let x = 650 + i * 30
+//       ctx.beginPath()
+//       ctx.rect(x, 10, 30, 30)
+//       ctx.strokeStyle = color
+//       ctx.stroke()
+//     }
+
+//     //inventory
+//     let x = 620
+//     for (let i = 0; i < imageWeapons.length; i++) {
+//       x += 30
+//       ctx.drawImage(imageWeapons[i], x, 12, 28, 28)
+//     }
+//     for (let i = 0; i < world.inventory.potions; i++) {
+//       ctx.beginPath()
+//       ctx.ellipse(x + 45 + i * 30, 25, 14, 14, 0, 0, 2 * Math.PI)
+//       ctx.fillStyle = "red"
+//       ctx.fill()
+//       ctx.closePath()
+//     }
+
+//     if (activeInventory.bool) {
+//       ctx.strokeStyle = "red"
+//       ctx.strokeRect(650 + activeInventory.num * 30, 11, 29, 29)
+//     }
+//   }
